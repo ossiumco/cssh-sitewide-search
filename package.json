@@ -8,8 +8,14 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "algoliasearch": "^3.32.1",
+    "bootstrap3": "^3.3.5",
     "core-js": "^2.6.5",
-    "vue": "^2.6.10"
+    "instantsearch.css": "^7.3.1",
+    "uiv": "^0.31.5",
+    "vue": "^2.6.10",
+    "vue-autosuggest": "^1.8.3",
+    "vue-instantsearch": "^2.0.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.6.0",
