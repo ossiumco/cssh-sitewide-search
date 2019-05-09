@@ -1,6 +1,5 @@
 <template>
-
-   <div class="mini-search">
+  <div class="mini-search">
     <ais-instant-search
       :search-client="searchClient"
       index-name="wp_prime_searchable_posts"
@@ -8,7 +7,7 @@
     >
       <ais-configure :hitsPerPage="10" :restrictSearchableAttributes="['post_title']"/>
       <!--[BEGIN-ADD][Bojana 5/8/2019] Add searchBox -->
-      <ais-search-box autofocus placeholder="Search . . ." />
+      <ais-search-box autofocus placeholder="Search . . ."/>
       <!--[BEGIN-ADD] [Bojana 5/8/2019] Add searchBox-->
       <ais-autocomplete :indices="[{ value:'wp_history_posts_post', label: 'History' }]">
         <div slot-scope="{ currentRefinement, indices, refine }">
@@ -21,18 +20,12 @@
             autofocus
             show-loading-indicator
           >
-          <div v-if="currentRefinement" class="resultHits" >
-            
-            
+          <div v-if="currentRefinement" class="resultHits">
             <ul v-for="(index,x) in indices" :key="x" class="search-results">
-              <span v-if="index.hits.length" >
-                <p class="resultTitle"
-                 @click="log(index.hits)"
-                >
-                  Results from {{index.label}}
-                </p>
-                <hr class="resultTitleHR"> 
- 
+              <span v-if="index.hits.length">
+                <p class="resultTitle" @click="log(index.hits)">Results from {{index.label}}</p>
+                <hr class="resultTitleHR">
+
                 <h3 class="subTitle">{{index.label}}</h3>
                 <li class="result-items">
                   <ul>
@@ -46,13 +39,19 @@
                       TODO
                       This would be a good place to put 'sub-components' for each type of result - e.g. post, faculty, spotlight, etc.
                       -->
-
-                      <div v-if="hit.images.thumbnail && hit.images.thumbnail.url" class="photo" >
+                      <div v-if="hit.post_type === 'event'">Event</div>
+                      <div v-if="hit.post_type === 'spotlight'">Spotlight</div>
+                      <div v-if="hit.post_type === 'newsletter'">Newsletter</div>
+                      <div v-if="hit.images.thumbnail && hit.images.thumbnail.url" class="photo">
                         <img :src="hit.images.thumbnail.url" alt class="profileImg">
                       </div>
-                      <div v-if="!hit.images.thumbnail || !hit.images.thumbnail.url" class="photo" >
-                        <img src="https://www.deedsalone.com/wp-content/uploads/2019/03/empty-face-athlete.svg" alt class="profileImg empty">
-                      </div>                     
+                      <div v-if="!hit.images.thumbnail || !hit.images.thumbnail.url" class="photo">
+                        <img
+                          src="https://www.deedsalone.com/wp-content/uploads/2019/03/empty-face-athlete.svg"
+                          alt
+                          class="profileImg empty"
+                        >
+                      </div>
                       <div class="content">
                         <h4>
                           <ais-highlight attribute="post_title" :hit="hit"/>
@@ -60,7 +59,7 @@
                           <small>{{hit.content}}</small>
                           <br>
                         </h4>
-                      
+
                         <p v-html="hit.post_excerpt"></p>
                       </div>
                     </li>
@@ -70,27 +69,18 @@
               </span>
               <!--[BEGIN-ADD][Bojana 5/8/2019] No Result -->
               <span v-if="!index.hits.length">
-                  <p class="resultTitle">
-                    No Results Found from {{index.label}}
-                  </p>
-                  <hr class="resultTitleHR">
-                  <div class="content noresult" > 
-                    <h4>
-                      <small>No results were found for your search. Would you lkie to retry your search across all of CSSH?</small>
-                      <br>
-                    </h4>
-                    <button>
-                      Search All of CSSH
-                    </button>
-                  </div>
-                      
+                <p class="resultTitle">No Results Found from {{index.label}}</p>
+                <hr class="resultTitleHR">
+                <div class="content noresult">
+                  <h4>
+                    <small>No results were found for your search. Would you lkie to retry your search across all of CSSH?</small>
+                    <br>
+                  </h4>
+                  <button>Search All of CSSH</button>
+                </div>
               </span>
               <!--[BEGIN-ADD][Bojana 5/8/2019] No Result -->
-              
             </ul>
-            
-              
-        
           </div>
         </div>
       </ais-autocomplete>
@@ -110,7 +100,7 @@ export default {
         "f62cf6274acbcdf43e219996a7966f06"
       ),
       query: "",
-      FoundResult: "0",
+      FoundResult: "0"
     };
   },
   methods: {
@@ -131,11 +121,9 @@ export default {
       return true;
     },
 
-    log: function (e) {
-     
+    log: function(e) {
       console.log(e);
-    } 
-  
+    }
   }
 };
 </script>
@@ -153,5 +141,124 @@ export default {
 .result-item {
   cursor: pointer;
   margin-bottom: 1em;
+}
+$searchboxFontSize: 3em;
+$searchIconColor: #9e9e9e;
+$headerColor: #404040;
+$sub_titleColor: #505050;
+$textColor: #9e9e9e;
+$borderColor: #8e8e8e;
+$titleLeftPadding: 18px;
+$sub_titleTopPadding: 5px;
+$sub_titleBottomPadding: 5px;
+$resultRightPadding: 20px;
+
+/* Styling for SearchBox*/
+.ais-Autocomplete input {
+  display: none !important;
+}
+input.ais-SearchBox-input {
+  width: 100%;
+  font-size: $searchboxFontSize;
+  padding-left: $titleLeftPadding;
+}
+svg.ais-SearchBox-submitIcon {
+  width: 3em !important;
+  height: 3em !important;
+  /* stroke-width: 16px !important; */
+}
+button.ais-SearchBox-reset {
+  display: none;
+}
+svg.ais-SearchBox-submitIcon path {
+  stroke: $searchIconColor;
+  stroke-width: 3.5px;
+  -webkit-text-stroke-width: 4px !important;
+  transform: scale(0.7);
+  transform: translate(7px, 7px) scale(0.7);
+}
+form.ais-SearchBox-form {
+  display: flex;
+}
+button.ais-SearchBox-submit {
+  background: transparent;
+  border: none;
+  margin-left: -5em;
+  width: 5em;
+  height: 5em;
+  margin-top: auto;
+  margin-bottom: auto;
+  font-size: 3;
+}
+/* Styling for Result*/
+.result_hits {
+  border: 1.5px solid #8e8e8e;
+  margin-top: 1.5em;
+  min-height: 50vh !important;
+}
+.result_title {
+  font-weight: 700;
+  font-size: 1.5em !important;
+  padding: 0.5em;
+  font-weight: bold;
+  font-size: 1.5em !important;
+  margin: 0em;
+  padding: 0.5em 0.5em 0 $titleLeftPadding;
+  color: $headerColor;
+}
+hr.result_title_hr {
+  margin: 0px !important;
+  border: 1px solid $borderColor;
+}
+hr.item_hr {
+  margin: $titleLeftPadding 0 !important;
+  margin-right: $resultRightPadding !important;
+  border: 1px solid $borderColor;
+}
+.sub_title {
+  padding-left: $titleLeftPadding !important;
+  padding-top: $sub_titleTopPadding !important;
+  padding-bottom: $sub_titleBottomPadding !important;
+  margin: 0px !important;
+  text-transform: capitalize;
+  font-size: 1.2em !important;
+  font-weight: 600;
+  color: $sub_titleColor;
+}
+.result-items ul {
+  padding-left: $titleLeftPadding;
+}
+
+.result-item.row {
+  display: flex;
+  margin: 0;
+}
+.result-item .content {
+  padding-left: 1em;
+  padding-right: 1em;
+}
+.result-item img.profileImg {
+  width: 5em !important;
+  margin-top: 10px;
+}
+.result-item p {
+  font-size: 15px !important;
+}
+.ais-Highlight {
+  font-weight: 700 !important;
+  font-size: 15px !important;
+}
+
+.empty.profileImg {
+  filter: grayscale(100%);
+}
+
+.content.noresult {
+  padding-left: $titleLeftPadding;
+}
+
+.content.noresult button {
+  margin-top: 2em;
+  margin-bottom: 2em;
 }
 </style>
