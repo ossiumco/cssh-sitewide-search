@@ -14,6 +14,10 @@ Vue.config.productionTip = false
 Vue.use(uiv)
 Vue.use(InstantSearch);
 
-new Vue({
-  render: h => h(App)
-}).$mount('#algolia-search-vue-app')
+if (window.algolia_indices) {
+  // full stop check to see if we have indicies to work with
+  // these are written to the dom with PHP and input with ACF
+  new Vue({
+    render: h => h(App)
+  }).$mount('#algolia-search-vue-app')
+}
