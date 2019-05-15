@@ -9,7 +9,7 @@
     >
       <span class="glyphicon glyphicon-search"></span>
     </button>
-    <modal v-model="open" :header="false" :footer="false">
+    <modal v-model="open" :header="false" :footer="false" :append-to-body="true">
       <search :primaryIndex="primaryIndex" :additionalIndicies="additionalIndicies"></search>
     </modal>
   </div>
@@ -63,7 +63,6 @@ function tryParseJSON(possibleJSONString) {
       let algoliaIndexArray = [];
       for (let i = 0; i < indexArray.length; i++) {
         const element = indexArray[i];
-        console.log("element", element);
         let object = { value: element.trim(), label: "" };
         algoliaIndexArray.push(object);
       }
