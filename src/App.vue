@@ -9,7 +9,13 @@
     >
       <span class="glyphicon glyphicon-search"></span>
     </button>
-    <modal v-model="open" :header="false" :footer="false" :append-to-body="true">
+    <modal
+      style="text-align:center;"
+      v-model="open"
+      :header="false"
+      :footer="false"
+      :append-to-body="true"
+    >
       <search :primaryIndex="primaryIndex" :additionalIndicies="additionalIndicies"></search>
     </modal>
   </div>
