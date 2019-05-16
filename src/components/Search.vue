@@ -108,7 +108,7 @@ export default {
     
       console.log("TEST");
  
-    }
+  }
 };
 </script>
 <style lang="scss">
@@ -257,10 +257,7 @@ body{
       margin-bottom:20px;
   }
   
-  .empty.profileImg
-  {
-      /*filter:grayscale(100%);*/
-  }
+
   
   .content.noresult
   {

@@ -11,7 +11,7 @@
       <ais-highlight attribute="post_title" :hit="hit"/>
     
       <div class="detail">
-      <small>{{hit.content}}</small>
+      <small v-trim>{{hit.content}}</small>
       </div>
     </h4>
 
@@ -30,6 +30,16 @@ export default {
     return {
 
 
+    }
+  },
+  directives: {
+  trim: {
+    // directive definition
+      inserted: function (el) {
+        var str = el.innerHTML;
+        var resultString = str.split(' ').slice(0, 240).join(" ") + "...";
+        el.innerHTML = resultString
+      }
     }
   }
 }
