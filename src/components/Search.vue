@@ -257,12 +257,16 @@ body{
   
   .content.noresult
   {
+      padding-top: $paddingfirstresult;
       padding-left:$titleLeftPadding;
   }
   
   .content.noresult button {
-      margin-top: 2em;
-      margin-bottom:2em;
+      /*margin-top: 0;
+      margin-bottom:2em;*/
+      background: red;
+      color:white;
+      font-size:20px;
   }
 
   /* Padding between content title and detail*/
