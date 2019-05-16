@@ -1,7 +1,7 @@
 <template>
 <div>
   <p class="result_title">
-    No Results Found from {{index.label}}
+    No results found from {{index.label}} site
   </p>
   <hr class="result_title_hr">
   <div class="content noresult" > 
