@@ -101,8 +101,14 @@ export default {
 
     log: function(e) {
       console.log(e);
+    },
+    
+  },
+  mounted: function() {
+    
+      console.log("TEST");
+ 
     }
-  }
 };
 </script>
 <style lang="scss">

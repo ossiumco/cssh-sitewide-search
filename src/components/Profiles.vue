@@ -9,9 +9,10 @@
   <div class="content">
     <h4>
       <ais-highlight attribute="post_title" :hit="hit"/>
-      <br>
+    
+      <div class="detail">
       <small>{{hit.content}}</small>
-      <br>
+      </div>
     </h4>
 
     <p v-html="hit.post_excerpt"></p>
