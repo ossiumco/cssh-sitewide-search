@@ -4,7 +4,7 @@
     <img :src="hit.images.thumbnail.url" alt class="profileImg">
   </div>
   <div v-if="!hit.images.thumbnail || !hit.images.thumbnail.url" class="photo" >
-    <img src="https://www.deedsalone.com/wp-content/uploads/2019/03/empty-face-athlete.svg" alt class="profileImg empty">
+    <img src="Logo.png" alt class="profileImg empty">
   </div>                     
   <div class="content">
     <h4>
@@ -17,6 +17,7 @@
     <p v-html="hit.post_excerpt"></p>
   </div>
 </div>
+
 </template>
 
 <script>

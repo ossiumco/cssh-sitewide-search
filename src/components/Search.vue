@@ -252,7 +252,7 @@ body{
   
   .empty.profileImg
   {
-      filter:grayscale(100%);
+      /*filter:grayscale(100%);*/
   }
   
   .content.noresult
