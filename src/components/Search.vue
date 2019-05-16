@@ -135,7 +135,8 @@ body{
   $sub_titleTopPadding:5px;
   $sub_titleBottomPadding:5px;
   $resultRightPadding:20px;
-  $highlightBackcolor: rgb(255,125,125);
+  $highlightcolor:rgb(255,125,125);
+  $highlightBackcolor: rgb(105,205,205);
   $paddingfirstresult: 10px;
   $paddingcontent: $titleLeftPadding;
   
@@ -278,5 +279,6 @@ body{
   mark
   {
     background:$highlightBackcolor !important;
+    color:$highlightcolor !important;
   }
 </style>
