@@ -4,7 +4,7 @@
       class="btn btn-orange pull-right"
       type="submit"
       role="button"
-      style="background: rgb(127, 8, 8) !important;"
+      style="background: rgb(127, 8, 8) !important;border-radius:5px!important;"
       @click="open=true"
     >
       <span class="glyphicon glyphicon-search"></span>
