@@ -151,6 +151,10 @@ body{
   {
     max-width:1085px !important;
   }
+  .modal-body
+  {
+    padding:25px 25px 10px;
+  }
   input.ais-SearchBox-input:focus {
     outline-color: black;
   }
