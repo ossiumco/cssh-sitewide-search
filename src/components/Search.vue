@@ -6,7 +6,7 @@
       :label="primaryIndex.label"
     >
       <ais-configure :hitsPerPage="10" :restrictSearchableAttributes="['post_title']"/>
-
+      <ais-refinement-list attribute="post_type_label" />
       <ais-search-box autofocus placeholder="Search . . ."/>
 
       <ais-autocomplete :indices="additionalIndicies">
@@ -45,8 +45,17 @@
                       TODO
                       This would be a good place to put 'sub-components' for each type of result - e.g. post, faculty, spotlight, etc.
                       -->
-                      <Profiles v-bind:hit="hit"></Profiles>
-                  
+                     
+                      
+                      <Spotlights v-if="hit.post_type && hit.post_type_label==='Spotlights'" v-bind:hit="hit"></Spotlights>
+                      <Faculty v-else-if="hit.post_type && hit.post_type_label==='Faculty'" v-bind:hit="hit"></Faculty>
+                      <Events v-else-if="hit.post_type && hit.post_type_label==='Events'" v-bind:hit="hit"></Events>
+                      <News v-else-if="hit.post_type && hit.post_type_label==='Newsletters'" v-bind:hit="hit"></News>
+                      <Pathways v-else-if="hit.post_type && hit.post_type_label==='Publications'" v-bind:hit="hit"></Pathways>
+                      <Posts v-else-if="hit.post_type && hit.post_type_label==='Posts'" v-bind:hit="hit"></Posts>
+                      <Profiles v-else v-bind:hit="hit"></Profiles>
+                      
+
 
                     </li>
                     <hr class="item_hr">
@@ -67,11 +76,19 @@
 
 <script>
 import algoliasearch from "algoliasearch/lite";
+
+import Spotlights from './Spotlights';
+import Faculty from './Faculty';
+import Events from './Events';
+import News from './News';
+import Pathways from './Pathways';
+import Posts from './Posts';
 import Profiles from './Profiles';
+
 import Noresult from './Noresult';
 import { config } from "@/algolia.config.js";
 export default {
-  components: { Profiles, Noresult},
+  components: { Spotlights, Faculty, Events, News, Pathways, Posts, Profiles, Noresult},
   name: "AlgoliaSearchUI",
   props: ["primaryIndex", "additionalIndicies"],
   data() {
