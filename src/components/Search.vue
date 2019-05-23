@@ -123,9 +123,8 @@ export default {
   },
   mounted: function() {
     
-      console.log("TEST");
- 
-  }
+      console.log("mounted");
+   }
 };
 </script>
 <style lang="scss">
