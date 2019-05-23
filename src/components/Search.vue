@@ -6,7 +6,7 @@
       :label="primaryIndex.label"
     >
       <ais-configure :hitsPerPage="10" :restrictSearchableAttributes="['post_title']"/>
-      <ais-refinement-list attribute="post_type_label" />
+      <!--ais-refinement-list attribute="post_type_label" /-->
       <ais-search-box autofocus placeholder="Search . . ."/>
 
       <ais-autocomplete :indices="additionalIndicies">
@@ -53,6 +53,9 @@
                       <News v-else-if="hit.post_type && hit.post_type_label==='Newsletters'" v-bind:hit="hit"></News>
                       <Pathways v-else-if="hit.post_type && hit.post_type_label==='Publications'" v-bind:hit="hit"></Pathways>
                       <Posts v-else-if="hit.post_type && hit.post_type_label==='Posts'" v-bind:hit="hit"></Posts>
+                      <Positions v-else-if="hit.post_type && hit.post_type_label==='Positions'" v-bind:hit="hit"></Positions>
+                      <Publications v-else-if="hit.post_type && hit.post_type_label==='Posts'" v-bind:hit="hit"></Publications>
+                      <Pages v-else-if="hit.post_type && hit.post_type_label==='Pages'" v-bind:hit="hit"></Pages>
                       <Profiles v-else v-bind:hit="hit"></Profiles>
                       
 
@@ -83,12 +86,15 @@ import Events from './Events';
 import News from './News';
 import Pathways from './Pathways';
 import Posts from './Posts';
+import Publications from './Posts';
+import Positions from './Posts';
+import Pages from './Posts';
 import Profiles from './Profiles';
 
 import Noresult from './Noresult';
 import { config } from "@/algolia.config.js";
 export default {
-  components: { Spotlights, Faculty, Events, News, Pathways, Posts, Profiles, Noresult},
+  components: { Spotlights, Faculty, Events, News, Pathways, Posts, Publications, Pages, Positions, Profiles, Noresult},
   name: "AlgoliaSearchUI",
   props: ["primaryIndex", "additionalIndicies"],
   data() {
