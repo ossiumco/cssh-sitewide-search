@@ -22,11 +22,12 @@
     </div>-->
     <div class="content">
       <h4>
+        
         <ais-highlight attribute="post_title" :hit="hit"/>
       </h4>
       <h5>{{hit.post_date_formatted}}</h5>
-      <p class="detail" v-trim v-html="hit.content"></p>
-      <p v-html="hit.post_excerpt"></p>
+      <p class="detail" v-trim v-text="hit.content"></p>
+      <p v-trim v-html="hit.post_excerpt"></p>
     </div>
   </div>
 </template>
@@ -42,11 +43,39 @@ export default {
       // directive definition
       inserted: function(el) {
         var str = el.innerHTML;
-        var max_words = 200;
+        /*var max_words = 200;
         var resultString = str.split(" ");
         resultString =   resultString.slice(0, max_words).join(" ");
         if (resultString.length> max_words)
-          resultString  =resultString + "...";
+          resultString  =resultString + "...";*/
+        
+        var max_len = 200;
+        
+        var resultString = str;
+        if (resultString.length > max_len)
+        {
+            resultString = str.substring(0, max_len - 1) + "...";
+        }
+    
+        el.innerHTML = resultString;
+      }
+      , 
+      componentUpdated: function(el) {
+        var str = el.innerHTML;
+        /*var max_words = 200;
+        var resultString = str.split(" ");
+        resultString =   resultString.slice(0, max_words).join(" ");
+        if (resultString.length> max_words)
+          resultString  =resultString + "...";*/
+        
+        var max_len = 200;
+        
+        var resultString = str;
+        if (resultString.length > max_len)
+        {
+            resultString = str.substring(0, max_len - 1) + "...";
+        }
+    
         el.innerHTML = resultString;
       }
     }

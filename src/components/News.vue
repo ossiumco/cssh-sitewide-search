@@ -28,11 +28,19 @@ export default {
       // directive definition
       inserted: function(el) {
         var str = el.innerHTML;
-        var max_words = 200;
+        /*var max_words = 200;
         var resultString = str.split(" ");
         resultString =   resultString.slice(0, max_words).join(" ");
         if (resultString.length> max_words)
-          resultString  =resultString + "...";
+          resultString  =resultString + "...";*/
+        
+        var max_len = 200;
+        
+        var resultString = str;
+        if (resultString.length > max_len)
+        {
+            resultString = str.substring(0, max_len - 1) + "...";
+        }
         el.innerHTML = resultString;
       }
     }

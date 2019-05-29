@@ -4,7 +4,7 @@
       <img :src="hit.images.thumbnail.url" alt class="profileImg">
     </div>
     <div v-if="!hit.images.thumbnail || !hit.images.thumbnail.url" class="photo">
-      <img src="Logo.png" alt class="profileImg empty">
+      <img src="https://cssh.northeastern.edu/wp-content/uploads/2019/05/logo-algolia.jpg" alt class="profileImg empty">
     </div>
     <div class="content">
       <h4>
@@ -28,11 +28,20 @@ export default {
       // directive definition
       inserted: function(el) {
         var str = el.innerHTML;
-        var max_words = 200;
+        /*var max_words = 200;
         var resultString = str.split(" ");
         resultString =   resultString.slice(0, max_words).join(" ");
         if (resultString.length> max_words)
-          resultString  =resultString + "...";
+          resultString  =resultString + "...";*/
+        
+        var max_len = 200;
+        
+        var resultString = str;
+        if (resultString.length > max_len)
+        {
+            resultString = str.substring(0, max_len - 1) + "...";
+        }
+    
         el.innerHTML = resultString;
       }
     }
