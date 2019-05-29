@@ -28,15 +28,15 @@ export default {
       // directive definition
       inserted: function(el) {
         var str = el.innerHTML;
-        var resultString =
-          str
-            .split(" ")
-            .slice(0, 240)
-            .join(" ") + "...";
+        var max_words = 200;
+        var resultString = str.split(" ");
+        resultString =   resultString.slice(0, max_words).join(" ");
+        if (resultString.length> max_words)
+          resultString  =resultString + "...";
         el.innerHTML = resultString;
       }
     }
-  }
+  },
 };
 </script>
 <style lang="scss">
