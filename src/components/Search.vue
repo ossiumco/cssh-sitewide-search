@@ -359,4 +359,9 @@ mark {
   background: $highlightBackcolor !important;
   color: $highlightcolor !important;
 }
+
+.modal.in .modal-dialog
+{
+    margin: auto !important;
+}
 </style>

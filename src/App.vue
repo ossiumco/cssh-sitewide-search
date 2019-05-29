@@ -113,6 +113,10 @@ body {
     max-width: 1085px !important;
     margin: 20px 0 !important;
   }
+  @media (max-width:768px){
+    display:block;
+    width:85vw;
+  }
 }
 .modal-content {
   padding-bottom: 0;
