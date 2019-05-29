@@ -100,7 +100,14 @@ body {
     height: 100%;
   }
 }
-
+.modal
+{
+  @media (max-width:768px)
+  {
+    left:2.5vw;
+    right:auto;
+  }
+}
 .modal-dialog {
   display: inline-block;
   text-align: left;
@@ -115,7 +122,7 @@ body {
   }
   @media (max-width:768px){
     display:block;
-    width:85vw;
+    width:95vw !important;
   }
 }
 .modal-content {
