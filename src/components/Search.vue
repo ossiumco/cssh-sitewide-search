@@ -164,7 +164,7 @@ body{
   $sub_titleBottomPadding:5px;
   $resultRightPadding:20px;
   $highlightcolor:rgb(255,125,125);
-  $highlightBackcolor: rgb(105,205,205);
+  $highlightBackcolor: gray;
   $paddingfirstresult: 10px;
   $paddingcontent: $titleLeftPadding;
   
