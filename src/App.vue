@@ -16,7 +16,11 @@
       :footer="false"
       :append-to-body="true"
     >
-      <search :primaryIndex="primaryIndex" :additionalIndicies="additionalIndicies"></search>
+      <search
+        @closeModalEvent="open = false"
+        :primaryIndex="primaryIndex"
+        :additionalIndicies="additionalIndicies"
+      ></search>
     </modal>
   </div>
 </template>
@@ -83,6 +87,11 @@ function tryParseJSON(possibleJSONString) {
 </script>
 
 <style lang="scss">
+body {
+  /*"Helvetica Neue", Helvetica, Arial, sans-serif*/
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
 @media screen and (min-width: 768px) {
   .modal:before {
     display: inline-block;
@@ -96,8 +105,30 @@ function tryParseJSON(possibleJSONString) {
   display: inline-block;
   text-align: left;
   vertical-align: middle;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  @media screen and (min-width: 768px) {
+    width: 85% !important;
+    max-width: 1085px !important;
+    margin: 20px 0 !important;
+  }
 }
 .modal-content {
   padding-bottom: 0;
+  border-radius: 0 !important;
+  @media screen and (min-width: 768px) {
+    border-radius: 6px !important;
+  }
+}
+
+.modal-content {
+  padding-bottom: 0 !important;
+}
+.modal-body {
+  padding: 0 25 10px !important;
+  @media screen and (min-width: 768px) {
+    padding: 25px 25px 10px !important;
+  }
 }
 </style>

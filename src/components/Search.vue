@@ -1,5 +1,12 @@
 <template>
   <div class="mini-search">
+    <div class="mobile-close-button" style="margin-bottom:1em;">
+      <button
+        style="margin-top:0;"
+        @click="closeModal"
+        class="btn btn-block btn-md btn-danger"
+      >Close</button>
+    </div>
     <ais-instant-search
       :search-client="searchClient"
       :index-name="primaryIndex.value"
@@ -140,6 +147,10 @@ export default {
     };
   },
   methods: {
+    closeModal() {
+      console.log("my event");
+      this.$emit("closeModalEvent");
+    },
     hitRedirect(selected) {
       if (selected) {
         window.open(selected.permalink);
@@ -166,10 +177,12 @@ export default {
   }
 };
 </script>
+
 <style lang="scss">
-body {
-  /*"Helvetica Neue", Helvetica, Arial, sans-serif*/
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+.mobile-close-button {
+  @media screen and (min-width: 768px) {
+    display: none;
+  }
 }
 .search-results {
   list-style: none;
@@ -178,6 +191,9 @@ body {
 }
 .result-items {
   ul {
+    @media screen and (max-width: 768px) {
+      padding-left: 0 !important;
+    }
     list-style: none;
   }
 }
@@ -201,16 +217,6 @@ $highlightBackcolor: rgb(105, 205, 205);
 $paddingfirstresult: 10px;
 $paddingcontent: $titleLeftPadding;
 
-/* Styling for SearchBox*/
-.modal-dialog {
-  max-width: 1085px !important;
-}
-.modal-content {
-  padding-bottom: 0 !important;
-}
-.modal-body {
-  padding: 25px 25px 10px;
-}
 input.ais-SearchBox-input:focus {
   outline-color: black;
 }
@@ -221,6 +227,9 @@ input.ais-SearchBox-input {
   display: none !important;
 }
 input.ais-SearchBox-input {
+  @media screen and (max-width: 768px) {
+    padding-left: 0;
+  }
   width: 100%;
   font-size: $searchboxFontSize;
   padding-left: $titleLeftPadding;
@@ -262,6 +271,9 @@ button.ais-SearchBox-submit {
   min-height: 50vh !important;
 }
 .result_title {
+  @media screen and (max-width: 768px) {
+    padding: 0.5em 0;
+  }
   font-weight: 700;
   font-size: 1.5em !important;
   padding: 0.5em;
@@ -272,6 +284,9 @@ button.ais-SearchBox-submit {
   color: $headerColor;
 }
 hr.result_title_hr {
+  @media screen and (max-width: 768px) {
+    margin: 0.3em 0 0;
+  }
   margin: 0.3em 1.4em 0;
   border: 1px solid $borderColor;
 }

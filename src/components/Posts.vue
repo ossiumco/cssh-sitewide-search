@@ -1,17 +1,30 @@
 <template>
   <div class="result-item row">
-    <div v-if="hit.images.thumbnail && hit.images.thumbnail.url" class="photo">
-      <img :src="hit.images.thumbnail.url" alt class="profileImg">
+    <div class="photo">
+      <img
+        v-if="hit.images.thumbnail && hit.images.thumbnail.url"
+        :src="hit.images.thumbnail.url"
+        alt
+        class="profileImg"
+      >
+      <img v-else src="Logo.png" alt class="profileImg empty">
+    </div>
+    <!-- <div class="photo">
+      <img
+        v-if="hit.images.thumbnail && hit.images.thumbnail.url"
+        :src="hit.images.thumbnail.url"
+        alt
+        class="profileImg"
+      >
     </div>
     <div v-if="!hit.images.thumbnail || !hit.images.thumbnail.url" class="photo">
       <img src="Logo.png" alt class="profileImg empty">
-    </div>
+    </div>-->
     <div class="content">
       <h4>
-        {{hit.post_type}}:
         <ais-highlight attribute="post_title" :hit="hit"/>
       </h4>
-
+      <h5>{{hit.post_date_formatted}}</h5>
       <p class="detail" v-trim v-html="hit.content"></p>
       <p v-html="hit.post_excerpt"></p>
     </div>
