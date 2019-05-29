@@ -7,7 +7,7 @@
         alt
         class="profileImg"
       >
-      <img v-else src="Logo.png" alt class="profileImg empty">
+      <img v-else src="https://cssh.northeastern.edu/wp-content/uploads/2019/05/logo-algolia.jpg" alt class="profileImg empty">
     </div>
     <!-- <div class="photo">
       <img

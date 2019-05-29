@@ -4,7 +4,7 @@
       <img :src="hit.images.thumbnail.url" alt class="profileImg">
     </div>
     <div v-if="!hit.images.thumbnail || !hit.images.thumbnail.url" class="photo">
-      <img src="Logo.png" alt class="profileImg empty">
+      <img src="https://cssh.northeastern.edu/wp-content/uploads/2019/05/logo-algolia.jpg" alt class="profileImg empty">
     </div>
     <div class="content">
       <h4>
