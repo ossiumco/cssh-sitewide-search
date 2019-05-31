@@ -12,9 +12,9 @@
       :index-name="primaryIndex.value"
       :label="primaryIndex.label"
     >
-      <ais-configure :hitsPerPage="10" :restrictSearchableAttributes="['post_title']"/>
+      <ais-configure :hitsPerPage="3" :restrictSearchableAttributes="['post_title']"/>
       <!--ais-refinement-list attribute="post_type_label" /-->
-      <ais-search-box autofocus placeholder="Search . . ."/>
+      <ais-search-box autofocus placeholder="Search"/>
 
       <ais-autocomplete :indices="additionalIndicies">
         <div slot-scope="{ currentRefinement, indices, refine }">
@@ -32,11 +32,11 @@
               <span v-if="index.hits.length">
                 <!-- <pre>{{index}}</pre> -->
                 <p
-                  v-if="index.label && index.label !== 'primary'"
+                  v-if="index.label && index.label === 'primary'"
                   class="result_title"
                   @click="log(index.hits)"
-                >Results from {{index.label}}</p>
-                <p v-else class="result_title">Results from this site</p>
+                >Faculty results from this site</p>
+                <p v-else class="result_title">Other results from this site</p>
                 <hr class="result_title_hr">
 
                 <!-- <h3 class="sub_title">{{index.label}}</h3> -->
@@ -86,7 +86,7 @@
                         v-bind:hit="hit"
                       ></Publications>
                       <Pages
-                        v-else-if="hit.post_type && hit.post_type_label==='Pages'"
+                        v-else-if="hit.post_type && hit.post_type_label==='pages'"
                         v-bind:hit="hit"
                       ></Pages>
                       <Profiles v-else v-bind:hit="hit"></Profiles>
@@ -143,7 +143,8 @@ export default {
     return {
       searchClient: algoliasearch(config.appId, config.key),
       query: "",
-      FoundResult: "0"
+      FoundResult: "0",
+      sawFirstIndex: "false",
     };
   },
   directives: {
@@ -181,7 +182,15 @@ export default {
       }
       return true;
     },
-
+    SawFirstIndexVal:function()
+    {
+        var result = false;
+        if (this.sawFirstIndex == "false")
+          result = true;
+        this.sawFirstIndex="true";
+        return result;
+    },
+    
     log: function(e) {
       console.log(e);
     }
@@ -226,16 +235,18 @@ $titleLeftPadding: 18px;
 $sub_titleTopPadding: 5px;
 $sub_titleBottomPadding: 5px;
 $resultRightPadding: 20px;
-$highlightcolor: rgb(255, 125, 125);
+$highlightcolor: white;
 $highlightBackcolor: gray;
 $paddingfirstresult: 10px;
 $paddingcontent: $titleLeftPadding;
 
 input.ais-SearchBox-input:focus {
-  outline-color: black;
+  outline-color: white;
 }
 input.ais-SearchBox-input {
   border: none;
+  box-shadow: 10px 10px 10px -15px;
+
 }
 .ais-Autocomplete input {
   display: none !important;
@@ -318,6 +329,10 @@ hr.item_hr {
   font-size: 1.2em !important;
   font-weight: 600;
   color: $sub_titleColor;
+}
+.category
+{
+  text-transform: capitalize;
 }
 .result-items ul {
   padding-left: $titleLeftPadding;

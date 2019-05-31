@@ -8,7 +8,7 @@
     </div>
     <div class="content">
       <h4>
-        {{hit.post_type}}:
+        <span class="category">{{hit.post_type}}:</span>
         <ais-highlight attribute="post_title" :hit="hit"/>
       </h4>
       <p class="detail" v-trim v-html="hit.content"></p>
@@ -42,6 +42,24 @@ export default {
             resultString = str.substring(0, max_len - 1) + "...";
         }
    
+        el.innerHTML = resultString;
+      }, 
+      componentUpdated: function(el) {
+        var str = el.innerHTML;
+        /*var max_words = 200;
+        var resultString = str.split(" ");
+        resultString =   resultString.slice(0, max_words).join(" ");
+        if (resultString.length> max_words)
+          resultString  =resultString + "...";*/
+        
+        var max_len = 200;
+        
+        var resultString = str;
+        if (resultString.length > max_len)
+        {
+            resultString = str.substring(0, max_len - 1) + "...";
+        }
+    
         el.innerHTML = resultString;
       }
     }
