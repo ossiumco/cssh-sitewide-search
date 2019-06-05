@@ -1,27 +1,20 @@
 <template>
   <div class="mini-search">
-    <div class="mobile-close-button" style="margin-bottom:1em;">
-      <button
-        style="margin-top:0;"
-        @click="closeModal"
-        class="btn btn-block btn-md btn-danger"
-      >Close</button>
-    </div>
     <ais-instant-search
       :search-client="searchClient"
       :index-name="primaryIndex.value"
       :label="primaryIndex.label"
     >
       <ais-configure :hitsPerPage="3" :restrictSearchableAttributes="['post_title']"/>
-      <!--ais-refinement-list attribute="post_type_label" /-->
-      <ais-search-box autofocus placeholder="Search"/>
+      <ais-search-box v-if="urlRefinement" :value="urlRefinement"/>
+      <ais-search-box v-else autofocus placeholder="Search"/>
 
       <ais-autocomplete :indices="additionalIndicies">
         <div slot-scope="{ currentRefinement, indices, refine }">
           <input
             class="form-control input-lg"
             type="search"
-            :value="currentRefinement"
+            :value="refinement || currentRefinement"
             placeholder="Search..."
             @input="refine($event.currentTarget.value)"
             autofocus
@@ -30,16 +23,13 @@
           <div v-if="currentRefinement" class="result_hits">
             <ul v-for="(index,x) in indices" :key="x" class="search-results">
               <span v-if="index.hits.length">
-                <!-- <pre>{{index}}</pre> -->
                 <p
-                  v-if="index.label && index.label === 'primary'"
-                  class="result_title"
-                  @click="log(index.hits)"
-                >Faculty results from this site</p>
-                <p v-else class="result_title">Other results from this site</p>
-                <hr class="result_title_hr">
+                  v-if="index.label === 'primary'"
+                  class="result_title jesse"
+                >Results from this site</p>
+                <p v-else class="result_title homer">{{index.label}}</p>
 
-                <!-- <h3 class="sub_title">{{index.label}}</h3> -->
+                <hr class="result_title_hr">
                 <li class="result-items">
                   <ul>
                     <li
@@ -97,7 +87,7 @@
               </span>
               <!-- Show NoResult Template for empty hits -->
               <span v-if="!index.hits.length">
-                <Noresult v-bind:index="index"></Noresult>
+                <Noresult v-bind:index="index" :searchTerm="currentRefinement"></Noresult>
               </span>
             </ul>
           </div>
@@ -138,14 +128,23 @@ export default {
     Noresult
   },
   name: "AlgoliaSearchUI",
-  props: ["primaryIndex", "additionalIndicies"],
+  props: ["primaryIndex", "additionalIndicies", "refinement"],
   data() {
     return {
       searchClient: algoliasearch(config.appId, config.key),
       query: "",
       FoundResult: "0",
-      sawFirstIndex: "false",
+      sawFirstIndex: "false"
     };
+  },
+  computed: {
+    urlRefinement() {
+      if (this.refinement) {
+        return this.refinement;
+      } else {
+        return false;
+      }
+    }
   },
   directives: {
     trim: {
@@ -154,16 +153,15 @@ export default {
         var str = el.innerHTML;
         var max_words = 200;
         var resultString = str.split(" ");
-        resultString =   resultString.slice(0, max_words).join(" ");
-        if (resultString.length> max_words)
-          resultString  =resultString + "...";
+        resultString = resultString.slice(0, max_words).join(" ");
+        if (resultString.length > max_words)
+          resultString = resultString + "...";
         el.innerHTML = resultString;
       }
     }
   },
   methods: {
     closeModal() {
-      console.log("my event");
       this.$emit("closeModalEvent");
     },
     hitRedirect(selected) {
@@ -182,21 +180,20 @@ export default {
       }
       return true;
     },
-    SawFirstIndexVal:function()
-    {
-        var result = false;
-        if (this.sawFirstIndex == "false")
-          result = true;
-        this.sawFirstIndex="true";
-        return result;
+    SawFirstIndexVal: function() {
+      var result = false;
+      if (this.sawFirstIndex == "false") result = true;
+      this.sawFirstIndex = "true";
+      return result;
     },
-    
+
     log: function(e) {
       console.log(e);
     }
   },
   mounted: function() {
-    console.log("mounted");
+    console.log("primaryIndex", this.primaryIndex);
+    console.log("additionalIndicies", this.additionalIndicies);
   }
 };
 </script>
@@ -246,7 +243,6 @@ input.ais-SearchBox-input:focus {
 input.ais-SearchBox-input {
   border: none;
   box-shadow: 10px 10px 10px -15px;
-
 }
 .ais-Autocomplete input {
   display: none !important;
@@ -330,8 +326,7 @@ hr.item_hr {
   font-weight: 600;
   color: $sub_titleColor;
 }
-.category
-{
+.category {
   text-transform: capitalize;
 }
 .result-items ul {
@@ -375,8 +370,7 @@ mark {
   color: $highlightcolor !important;
 }
 
-.modal.in .modal-dialog
-{
-    margin: auto !important;
+.modal.in .modal-dialog {
+  margin: auto !important;
 }
 </style>

@@ -10,16 +10,24 @@
       <span
         style="font-size: 1.5em;"
       >No results were found for your search. Would you like to retry your search across all of CSSH?</span>
-      <a href class="btn btn-danger btn-lg btn-block">Search All of CSSH</a>
+      <button @click="goToSiteWideSearch" class="btn btn-danger btn-lg btn-block">Search All of CSSH</button>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  props: ["index"],
+  props: ["index", "searchTerm"],
   data() {
     return {};
+  },
+  methods: {
+    goToSiteWideSearch() {
+      let searchTerm = encodeURI(this.searchTerm);
+      window.location.assign(
+        `https://cssh.northeastern.edu/sitewide-search?searchFor=${searchTerm}`
+      );
+    }
   }
 };
 </script>

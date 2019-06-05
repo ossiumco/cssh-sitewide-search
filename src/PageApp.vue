@@ -1,27 +1,10 @@
 <template>
   <div>
-    <button
-      class="btn btn-orange pull-right"
-      type="submit"
-      role="button"
-      style="background: rgb(127, 8, 8) !important;border-radius:5px!important;"
-      @click="open=true"
-    >
-      <span class="glyphicon glyphicon-search"></span>
-    </button>
-    <modal
-      style="text-align:center;"
-      v-model="open"
-      :header="false"
-      :footer="false"
-      :append-to-body="true"
-    >
-      <search
-        @closeModalEvent="open = false"
-        :primaryIndex="primaryIndex"
-        :additionalIndicies="additionalIndicies"
-      ></search>
-    </modal>
+    <search
+      :primaryIndex="primaryIndex"
+      :additionalIndicies="additionalIndicies"
+      :refinement="refinement"
+    ></search>
   </div>
 </template>
 
@@ -36,12 +19,13 @@ export default {
     return {
       open: false,
       primaryIndex: null,
-      additionalIndicies: []
+      additionalIndicies: [],
+      refinement: ""
     };
   },
   created() {
-    if (window.algolia_indices) {
-      let indexJson = tryParseJSON(window.algolia_indices);
+    if (window.algolia_indicies) {
+      let indexJson = tryParseJSON(window.algolia_indicies);
       if (indexJson) {
         if (!indexJson.length) {
           this.primaryIndex = indexJson;
@@ -52,6 +36,12 @@ export default {
           }
         }
       }
+    }
+    let test = getUrlVars();
+    console.log("typeof", typeof test);
+    if (test.searchFor) {
+      console.log("JESSE JES JSEJASDF", decodeURI(test.searchFor));
+      this.refinement = decodeURI(test.searchFor);
     }
   }
 };
@@ -84,6 +74,18 @@ function tryParseJSON(possibleJSONString) {
   // name="wp_prime_searchable_posts"
   // label="Prime"
 }
+
+function getUrlVars() {
+  var vars = {};
+  var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(
+    m,
+    key,
+    value
+  ) {
+    vars[key] = value;
+  });
+  return vars;
+}
 </script>
 
 <style lang="scss">
@@ -100,12 +102,10 @@ body {
     height: 100%;
   }
 }
-.modal
-{
-  @media (max-width:768px)
-  {
-    left:2.5vw;
-    right:auto;
+.modal {
+  @media (max-width: 768px) {
+    left: 2.5vw;
+    right: auto;
   }
 }
 .modal-dialog {
@@ -120,9 +120,9 @@ body {
     max-width: 1085px !important;
     margin: 20px 0 !important;
   }
-  @media (max-width:768px){
-    display:block;
-    width:95vw !important;
+  @media (max-width: 768px) {
+    display: block;
+    width: 95vw !important;
   }
 }
 .modal-content {
