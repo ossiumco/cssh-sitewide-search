@@ -9,7 +9,7 @@
       <ais-search-box v-if="urlRefinement" :value="urlRefinement"/>
       <ais-search-box v-else autofocus placeholder="Search"/>
 
-      <ais-autocomplete :indices="additionalIndicies">
+      <ais-autocomplete :indices="additionalIndices">
         <div slot-scope="{ currentRefinement, indices, refine }">
           <input
             class="form-control input-lg"
@@ -22,12 +22,11 @@
           >
           <div v-if="currentRefinement" class="result_hits">
             <ul v-for="(index,x) in indices" :key="x" class="search-results">
+              <!-- THING
+              <pre>{{index}}</pre>-->
               <span v-if="index.hits.length">
-                <p
-                  v-if="index.label === 'primary'"
-                  class="result_title jesse"
-                >Results from this site</p>
-                <p v-else class="result_title homer">{{index.label}}</p>
+                <p v-if="index.label === 'primary'" class="result_title">Results from this site</p>
+                <p v-else class="result_title">{{index.label}}</p>
 
                 <hr class="result_title_hr">
                 <li class="result-items">
@@ -86,9 +85,12 @@
                 </li>
               </span>
               <!-- Show NoResult Template for empty hits -->
-              <span v-if="!index.hits.length">
+              <span v-if="!index.hits.length && x === 0">
                 <Noresult v-bind:index="index" :searchTerm="currentRefinement"></Noresult>
               </span>
+              <!-- <span v-if="!index.hits.length && index.index === 'wp_people_posts_faculty'">
+                <Noresult v-bind:index="index" :searchTerm="currentRefinement"></Noresult>
+              </span>-->
             </ul>
           </div>
         </div>
@@ -128,7 +130,7 @@ export default {
     Noresult
   },
   name: "AlgoliaSearchUI",
-  props: ["primaryIndex", "additionalIndicies", "refinement"],
+  props: ["primaryIndex", "additionalIndices", "refinement"],
   data() {
     return {
       searchClient: algoliasearch(config.appId, config.key),
@@ -193,7 +195,7 @@ export default {
   },
   mounted: function() {
     console.log("primaryIndex", this.primaryIndex);
-    console.log("additionalIndicies", this.additionalIndicies);
+    console.log("additionalIndices", this.additionalIndices);
   }
 };
 </script>
@@ -297,11 +299,10 @@ button.ais-SearchBox-submit {
   }
   font-weight: 700;
   font-size: 1.5em !important;
-  padding: 0.5em;
   font-weight: bold;
   font-size: 1.5em !important;
   margin: 0em;
-  padding: 0.5em 0.5em 0 $titleLeftPadding;
+  padding: 0.5em 0.5em 0.7em $titleLeftPadding;
   color: $headerColor;
 }
 hr.result_title_hr {

@@ -16,9 +16,9 @@ Vue.use(uiv)
 Vue.use(InstantSearch);
 
 // This is the Search Modal UI
-if (window.algolia_indicies) {
-  console.log('algolia_indicies', window.algolia_indicies)
-  // full stop check to see if we have indicies to work with
+if (window.algolia_indices) {
+  console.log('algolia_indices', window.algolia_indices)
+  // full stop check to see if we have indices to work with
   // these are written to the dom with PHP and input with ACF
   new Vue({
     render: h => h(ModalApp)
@@ -27,7 +27,7 @@ if (window.algolia_indicies) {
 
 // This is the Search Page UI
 let searchPageDiv = document.getElementById('algolia-full-page-search-vue-app-anchor')
-if (searchPageDiv && window.algolia_indicies) {
+if (searchPageDiv && window.algolia_indices) {
   new Vue({
     render: h => h(PageApp)
   }).$mount('#algolia-full-page-search-vue-app-anchor')

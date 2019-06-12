@@ -19,7 +19,7 @@
       <search
         @closeModalEvent="open = false"
         :primaryIndex="primaryIndex"
-        :additionalIndicies="additionalIndicies"
+        :additionalIndices="additionalIndices"
         :refinement="null"
       ></search>
     </modal>
@@ -37,21 +37,24 @@ export default {
     return {
       open: false,
       primaryIndex: null,
-      additionalIndicies: []
+      additionalIndices: []
     };
   },
   created() {
-    if (window.algolia_indicies) {
-      let indexJson = tryParseJSON(window.algolia_indicies);
+    if (window.algolia_indices) {
+      console.log("window.algolia_indices", window.algolia_indices);
+      let indexJson = tryParseJSON(window.algolia_indices);
       console.log("indexJson", indexJson);
       if (indexJson) {
-        console.log("thing");
         if (!indexJson.length) {
+          console.log("simple");
           this.primaryIndex = indexJson;
         } else {
+          console.log("complex");
           this.primaryIndex = indexJson.shift(); // returns "zero"
           if (indexJson.length > 0) {
-            this.additionalIndicies = indexJson; // ["one", "two", "three"]
+            console.log("remainder");
+            this.additionalIndices = indexJson; // ["one", "two", "three"]
           }
         }
       }

@@ -1,10 +1,7 @@
 <template>
   <div>
-    <p
-      v-if="index.label !== 'primary'"
-      class="result_title"
-    >No results found from {{index.label}} site</p>
-    <p v-else class="result_title">No results found</p>
+    <p v-if="index.label !== 'primary'" class="result_title">No results found from {{index.label}}</p>
+    <p v-else class="result_title">No results found on this site</p>
     <!-- <hr class="result_title_hr"> -->
     <div class="content noresult">
       <span
@@ -25,7 +22,7 @@ export default {
     goToSiteWideSearch() {
       let searchTerm = encodeURI(this.searchTerm);
       window.location.assign(
-        `https://cssh.northeastern.edu/sitewide-search?searchFor=${searchTerm}`
+        `https://cssh.northeastern.edu/people/sitewide-search?searchFor=${searchTerm}`
       );
     }
   }

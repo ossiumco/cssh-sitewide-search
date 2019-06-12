@@ -2,7 +2,7 @@
   <div>
     <search
       :primaryIndex="primaryIndex"
-      :additionalIndicies="additionalIndicies"
+      :additionalIndices="additionalIndices"
       :refinement="refinement"
     ></search>
   </div>
@@ -19,28 +19,26 @@ export default {
     return {
       open: false,
       primaryIndex: null,
-      additionalIndicies: [],
+      additionalIndices: [],
       refinement: ""
     };
   },
   created() {
-    if (window.algolia_indicies) {
-      let indexJson = tryParseJSON(window.algolia_indicies);
+    if (window.algolia_indices) {
+      let indexJson = tryParseJSON(window.algolia_indices);
       if (indexJson) {
         if (!indexJson.length) {
           this.primaryIndex = indexJson;
         } else {
           this.primaryIndex = indexJson.shift(); // returns "zero"
           if (indexJson.length > 0) {
-            this.additionalIndicies = indexJson; // ["one", "two", "three"]
+            this.additionalIndices = indexJson; // ["one", "two", "three"]
           }
         }
       }
     }
     let test = getUrlVars();
-    console.log("typeof", typeof test);
     if (test.searchFor) {
-      console.log("JESSE JES JSEJASDF", decodeURI(test.searchFor));
       this.refinement = decodeURI(test.searchFor);
     }
   }
@@ -77,7 +75,7 @@ function tryParseJSON(possibleJSONString) {
 
 function getUrlVars() {
   var vars = {};
-  var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(
+  window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(
     m,
     key,
     value
