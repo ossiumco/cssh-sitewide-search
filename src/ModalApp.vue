@@ -143,7 +143,7 @@ body {
 .modal-body {
   padding: 0 25 10px !important;
   @media screen and (min-width: 768px) {
-    padding: 25px 25px 10px !important;
+    padding: 10px 25px !important;
   }
 }
 </style>

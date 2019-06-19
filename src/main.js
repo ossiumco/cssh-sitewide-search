@@ -16,7 +16,8 @@ Vue.use(uiv)
 Vue.use(InstantSearch);
 
 // This is the Search Modal UI
-if (window.algolia_indices) {
+let TopNavSearchDiv = document.getElementById('algolia-search-vue-app')
+if (TopNavSearchDiv && window.algolia_indices) {
   console.log('algolia_indices', window.algolia_indices)
   // full stop check to see if we have indices to work with
   // these are written to the dom with PHP and input with ACF

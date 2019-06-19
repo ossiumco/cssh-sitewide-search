@@ -6,7 +6,13 @@
       :label="primaryIndex.label"
     >
       <ais-configure :hitsPerPage="3" :restrictSearchableAttributes="['post_title']"/>
-      <ais-search-box v-if="urlRefinement" :value="urlRefinement"/>
+      <ais-search-box
+        v-if="urlRefinement"
+        :value="urlRefinement"
+        :class-names="{
+        'ais-SearchBox-input': 'search-page-vue-search-input'
+      }"
+      />
       <ais-search-box v-else autofocus placeholder="Search"/>
 
       <ais-autocomplete :indices="additionalIndices">
@@ -22,8 +28,6 @@
           >
           <div v-if="currentRefinement" class="result_hits">
             <ul v-for="(index,x) in indices" :key="x" class="search-results">
-              <!-- THING
-              <pre>{{index}}</pre>-->
               <span v-if="index.hits.length">
                 <p v-if="index.label === 'primary'" class="result_title">Results from this site</p>
                 <p v-else class="result_title">{{index.label}}</p>
@@ -37,11 +41,6 @@
                       @click="hitRedirect(hit)"
                       class="result-item row"
                     >
-                      <!--
-                      TODO
-                      This would be a good place to put 'sub-components' for each type of result - e.g. post, faculty, spotlight, etc.
-                      -->
-
                       <Spotlights
                         v-if="hit.post_type && hit.post_type_label==='Spotlights'"
                         v-bind:hit="hit"
@@ -85,12 +84,19 @@
                 </li>
               </span>
               <!-- Show NoResult Template for empty hits -->
-              <span v-if="!index.hits.length && x === 0">
+              <span
+                v-if="!index.hits.length && x === 0 && index.index !== 'wp_prime_searchable_posts'"
+              >
                 <Noresult v-bind:index="index" :searchTerm="currentRefinement"></Noresult>
               </span>
-              <!-- <span v-if="!index.hits.length && index.index === 'wp_people_posts_faculty'">
+              <!-- <span
+                v-if="!index.hits.length && index.index === 'wp_prime_searchable_posts'"
+              >On Prime, no results</span>
+
+              <span v-if="!index.hits.length && index.index === 'wp_people_posts_faculty'">
                 <Noresult v-bind:index="index" :searchTerm="currentRefinement"></Noresult>
-              </span>-->
+              </span>
+              -->
             </ul>
           </div>
         </div>
@@ -136,15 +142,23 @@ export default {
       searchClient: algoliasearch(config.appId, config.key),
       query: "",
       FoundResult: "0",
-      sawFirstIndex: "false"
+      sawFirstIndex: "false",
+      someValue: this.refinement,
+      searchPageEventAnchor: false
     };
   },
   computed: {
-    urlRefinement() {
-      if (this.refinement) {
-        return this.refinement;
-      } else {
-        return false;
+    urlRefinement: {
+      get() {
+        if (this.someValue) {
+          return this.someValue;
+        } else {
+          return false;
+        }
+      },
+      set(newValue) {
+        this.someValue = null;
+        return newValue;
       }
     }
   },
@@ -163,6 +177,9 @@ export default {
     }
   },
   methods: {
+    alertHello() {
+      alert("hello");
+    },
     closeModal() {
       this.$emit("closeModalEvent");
     },
@@ -191,13 +208,59 @@ export default {
 
     log: function(e) {
       console.log(e);
+    },
+    handleKeyCheck: function(event) {
+      console.log("handling key check");
+      let keyTest = KeyCheck(event);
+      if (keyTest) {
+        if (this.urlRefinement.length) {
+          this.urlRefinement = this.urlRefinement.substring(
+            0,
+            this.urlRefinement.length - 1
+          );
+        } else if (!this.urlRefinement && this.searchPageEventAnchor) {
+          this.searchPageEventAnchor = false;
+        } else {
+          return;
+        }
+      }
     }
   },
   mounted: function() {
-    console.log("primaryIndex", this.primaryIndex);
-    console.log("additionalIndices", this.additionalIndices);
+    // console.log("primaryIndex", this.primaryIndex);
+    // console.log("additionalIndices", this.additionalIndices);
+    if (this.urlRefinement) {
+      setTimeout(() => {
+        let eventAnchor = document.getElementsByClassName(
+          "search-page-vue-search-input"
+        );
+        this.searchPageEventAnchor = eventAnchor[0].addEventListener(
+          "keydown",
+          this.handleKeyCheck
+        );
+      }, 500);
+    }
   }
 };
+
+function KeyCheck(event) {
+  var KeyID = event.keyCode;
+  if (KeyID === 8 || KeyID === 46) {
+    return true;
+  } else {
+    return false;
+  }
+  // switch (KeyID) {
+  //   case 8:
+  //     // alert("backspace");
+  //     break;
+  //   case 46:
+  //     // alert("delete");
+  //     break;
+  //   default:
+  //     break;
+  // }
+}
 </script>
 
 <style lang="scss">
