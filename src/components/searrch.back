@@ -1,0 +1,519 @@
+SEARCH BACKUP
+
+<template>
+  <div>
+    <ais-instant-search
+      :search-client="searchClient"
+      :index-name="primaryIndex.value"
+      :label="primaryIndex.label"
+    >
+      <!-- <ais-configure :hitsPerPage="3" :restrictSearchableAttributes="['post_title']" /> -->
+      <ais-search-box
+        v-if="urlRefinement"
+        :value="urlRefinement"
+        :class-names="{
+        'ais-SearchBox-input': 'search-page-vue-search-input'
+      }"
+      />
+      <ais-search-box v-else autofocus placeholder="Search" />
+      <ais-hits>
+        <!-- <ais-autocomplete :indices="additionalIndices"> -->
+        <div slot="items" slot-scope="{ items }">
+          <!-- <input
+            class="form-control input-lg"
+            type="search"
+            :value="refinement || currentRefinement"
+            placeholder="Search..."
+            @input="refine($event.currentTarget.value)"
+            autofocus
+            show-loading-indicator
+          />-->
+          <!-- <div>
+            <pre>{{indices}}</pre>
+          </div>-->
+          <div class="result_hits">
+            <ul v-for="(index,x) in items" :key="x" class="search-results">
+              <span v-if="index.hits.length">
+                asdf
+                <p v-if="index.label === 'primary'" class="result_title">Results from this site</p>
+                <p v-else class="result_title">{{index.label}}</p>
+
+                <hr class="result_title_hr" />
+                <li class="result-items">
+                  <ul>
+                    <li
+                      v-for="(hit,i) in index.hits"
+                      :key="i"
+                      @click="hitRedirect(hit)"
+                      class="result-item row"
+                    >
+                      <Spotlights
+                        v-if="hit.post_type && hit.post_type_label==='Spotlights'"
+                        v-bind:hit="hit"
+                      ></Spotlights>
+                      <Faculty
+                        v-else-if="hit.post_type && hit.post_type_label==='Faculty'"
+                        v-bind:hit="hit"
+                      ></Faculty>
+                      <Events
+                        v-else-if="hit.post_type && hit.post_type_label==='Events'"
+                        v-bind:hit="hit"
+                      ></Events>
+                      <News
+                        v-else-if="hit.post_type && hit.post_type_label==='Newsletters'"
+                        v-bind:hit="hit"
+                      ></News>
+                      <Pathways
+                        v-else-if="hit.post_type && hit.post_type_label==='Publications'"
+                        v-bind:hit="hit"
+                      ></Pathways>
+                      <Posts
+                        v-else-if="hit.post_type && hit.post_type_label==='Posts'"
+                        v-bind:hit="hit"
+                      ></Posts>
+                      <Positions
+                        v-else-if="hit.post_type && hit.post_type_label==='Positions'"
+                        v-bind:hit="hit"
+                      ></Positions>
+                      <Publications
+                        v-else-if="hit.post_type && hit.post_type_label==='Posts'"
+                        v-bind:hit="hit"
+                      ></Publications>
+                      <Pages
+                        v-else-if="hit.post_type && hit.post_type_label==='pages'"
+                        v-bind:hit="hit"
+                      ></Pages>
+                      <Profiles v-else v-bind:hit="hit"></Profiles>
+                    </li>
+                    <hr class="item_hr" />
+                  </ul>
+                </li>
+              </span>
+              <!-- Show NoResult Template for empty hits -->
+              <span
+                v-if="!index.hits.length && x === 0 && index.index !== 'wp_prime_searchable_posts'"
+              >
+                <Noresult v-bind:index="index" :searchTerm="currentRefinement"></Noresult>
+              </span>
+              <div
+                class="col-xs-12"
+                v-if="!index.hits.length && x === 0 && index.index === 'wp_prime_searchable_posts'"
+              >No results found on this site.</div>
+              <!--
+              <span v-if="!index.hits.length && index.index === 'wp_people_posts_faculty'">
+                <Noresult v-bind:index="index" :searchTerm="currentRefinement"></Noresult>
+              </span>
+              -->
+            </ul>
+          </div>
+        </div>
+      </ais-hits>
+      <!-- </ais-autocomplete> -->
+    </ais-instant-search>
+  </div>
+</template>
+
+<script>
+import algoliasearch from "algoliasearch/lite";
+
+// import DebouncedSearchBox from "./SearchBox";
+import Spotlights from "./Spotlights";
+import Faculty from "./Faculty";
+import Events from "./Events";
+import News from "./News";
+import Pathways from "./Pathways";
+import Posts from "./Posts";
+import Publications from "./Posts";
+import Positions from "./Posts";
+import Pages from "./Posts";
+import Profiles from "./Profiles";
+
+import Noresult from "./Noresult";
+import { config } from "@/algolia.config.js";
+
+const algoliaClient = algoliasearch(config.appId, config.key);
+
+const algoliaSearchClient = {
+  search(requests) {
+    const newRequests = requests.map(request => {
+      console.log("request", request);
+      // test for empty string and do not trigger search if true
+      // if (
+      //   request.params &&
+      //   request.params.query &&
+      //   request.params.query.length > 0
+      // ) {
+      //   return request;
+      // }
+      if (
+        !request.params ||
+        !request.params.query ||
+        request.params.query.length === 0
+      ) {
+        return;
+      }
+      console.log("request", request);
+      return request;
+    });
+
+    newRequests.map((request, index) => {
+      if (request === undefined) {
+        console.log("this is undefined", newRequests);
+        newRequests.splice(index, 1);
+        console.log("after splice", newRequests);
+        // return;
+      }
+    });
+
+    if (newRequests.length) {
+      console.log("poop");
+      return algoliaClient.search(newRequests);
+    } else {
+      return;
+    }
+    console.log("newRequests", newRequests, newRequests.length);
+    // console.log("filteredRequests", filteredRequests);
+
+    // return algoliaClient.search(filteredRequests);
+  }
+};
+
+export default {
+  components: {
+    // DebouncedSearchBox,
+    Spotlights,
+    Faculty,
+    Events,
+    News,
+    Pathways,
+    Posts,
+    Publications,
+    Pages,
+    Positions,
+    Profiles,
+    Noresult
+  },
+  name: "AlgoliaSearchUI",
+  props: ["primaryIndex", "additionalIndices", "refinement", "indexes"],
+  data() {
+    return {
+      // searchClient: algoliaSearchClient,
+      searchClient: algoliasearch(config.appId, config.key),
+      query: "",
+      FoundResult: "0",
+      sawFirstIndex: "false",
+      someValue: this.refinement,
+      searchPageEventAnchor: false
+    };
+  },
+  computed: {
+    urlRefinement: {
+      get() {
+        if (this.someValue) {
+          return this.someValue;
+        } else {
+          return false;
+        }
+      },
+      set(newValue) {
+        this.someValue = null;
+        return newValue;
+      }
+    }
+  },
+  directives: {
+    trim: {
+      // directive definition
+      inserted: function(el) {
+        var str = el.innerHTML;
+        var max_words = 200;
+        var resultString = str.split(" ");
+        resultString = resultString.slice(0, max_words).join(" ");
+        if (resultString.length > max_words)
+          resultString = resultString + "...";
+        el.innerHTML = resultString;
+      }
+    }
+  },
+  methods: {
+    alertHello() {
+      alert("hello");
+    },
+    closeModal() {
+      this.$emit("closeModalEvent");
+    },
+    hitRedirect(selected) {
+      if (selected) {
+        window.open(selected.permalink);
+      }
+    },
+    indicesToSuggestions(indices) {
+      return indices.map(({ hits }) => ({ data: hits }));
+    },
+    isEmpty: function(obj) {
+      for (const key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          return false;
+        }
+      }
+      return true;
+    },
+    SawFirstIndexVal: function() {
+      var result = false;
+      if (this.sawFirstIndex == "false") result = true;
+      this.sawFirstIndex = "true";
+      return result;
+    },
+
+    log: function(e) {
+      console.log(e);
+    },
+    handleKeyCheck: function(event) {
+      console.log("handling key check");
+      let keyTest = KeyCheck(event);
+      if (keyTest) {
+        if (this.urlRefinement.length) {
+          this.urlRefinement = this.urlRefinement.substring(
+            0,
+            this.urlRefinement.length - 1
+          );
+        } else if (!this.urlRefinement && this.searchPageEventAnchor) {
+          this.searchPageEventAnchor = false;
+        } else {
+          return;
+        }
+      }
+    }
+  },
+  mounted: function() {
+    // console.log("primaryIndex", this.primaryIndex);
+    // console.log("additionalIndices", this.additionalIndices);
+    if (this.urlRefinement) {
+      setTimeout(() => {
+        let eventAnchor = document.getElementsByClassName(
+          "search-page-vue-search-input"
+        );
+        this.searchPageEventAnchor = eventAnchor[0].addEventListener(
+          "keydown",
+          this.handleKeyCheck
+        );
+      }, 500);
+    }
+  }
+};
+
+function KeyCheck(event) {
+  var KeyID = event.keyCode;
+  if (KeyID === 8 || KeyID === 46) {
+    return true;
+  } else {
+    return false;
+  }
+  // switch (KeyID) {
+  //   case 8:
+  //     // alert("backspace");
+  //     break;
+  //   case 46:
+  //     // alert("delete");
+  //     break;
+  //   default:
+  //     break;
+  // }
+}
+</script>
+
+<style lang="scss" scoped>
+.search-results {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.result_hits {
+  // border: 3px solid black;
+  margin-top: 1.5em;
+  min-height: 50vh !important;
+}
+.result-items {
+  ul {
+    @media screen and (max-width: 768px) {
+      padding-left: 0 !important;
+    }
+    list-style: none;
+  }
+}
+.result-item {
+  cursor: pointer;
+  margin-bottom: 1em;
+}
+.result-items ul {
+  padding-left: 18px;
+  padding-top: 10px;
+}
+
+.result-item.row {
+  display: flex;
+  margin: 0 0 0.5em 0;
+}
+.result-item .content {
+  padding-left: 1em;
+  padding-right: 1em;
+}
+.result-item img.profileImg {
+  width: 5em !important;
+}
+.result-item p {
+  font-size: 15px;
+}
+
+hr.result_title_hr {
+  @media screen and (max-width: 768px) {
+    margin: 0.3em 0 0;
+  }
+  margin: 0.3em 1.4em 0;
+  border: 1px solid black;
+}
+hr.item_hr {
+  margin: 18px 0 !important;
+  margin-right: 20px !important;
+  border: 1px solid black;
+}
+</style>
+
+<style lang="scss">
+#vue-site-wide-search-app,
+#vue-site-wide-search-app-search-modal {
+  // modal specific stuff
+  &.modal {
+    @media (min-width: 768px) {
+      &:before {
+        display: inline-block;
+        vertical-align: middle;
+        content: " ";
+        height: 100%;
+      }
+    }
+    &.in .modal-dialog {
+      margin: auto !important;
+    }
+    .modal-dialog {
+      display: inline-block;
+      text-align: left;
+      vertical-align: middle;
+      width: 100% !important;
+      max-width: 100% !important;
+      margin: 0 !important;
+      @media screen and (min-width: 768px) {
+        width: 85% !important;
+        max-width: 1085px !important;
+        margin: 20px 0 !important;
+      }
+    }
+    .modal-content {
+      padding-bottom: 0 !important;
+      border-radius: 0 !important;
+      @media screen and (min-width: 768px) {
+        border-radius: 6px !important;
+      }
+    }
+    // .modal-body {
+    //   padding: 0 25 10px !important;
+    //   @media screen and (min-width: 768px) {
+    //     padding: 25px 25px 10px !important;
+    //   }
+    // }
+  }
+  // end modal specific stuff
+  .result_title {
+    @media screen and (max-width: 768px) {
+      padding: 0.5em 0;
+    }
+    font-weight: 700;
+    font-size: 1.5em !important;
+    font-weight: bold;
+    font-size: 1.5em !important;
+    margin: 0em;
+    padding: 0.5em 0.5em 0.7em 18px;
+    color: #404040;
+  }
+
+  .photo {
+    display: inline-block;
+    padding-right: 1em;
+    img {
+      max-width: 100px;
+    }
+  }
+  /* Padding between content title and detail*/
+  .content {
+    // display: inline-block;
+    .detail {
+      padding-top: 18px;
+    }
+  }
+  .ais-Highlight {
+    // font-weight: 700 !important;
+    // font-size: 15px !important;
+    margin-bottom: 20px;
+  }
+  svg.ais-SearchBox-submitIcon {
+    width: 3em !important;
+    height: 3em !important;
+    /* stroke-width: 16px !important; */
+  }
+  input.ais-SearchBox-input:focus {
+    outline-color: white;
+  }
+  input.ais-SearchBox-input {
+    border: none;
+    // box-shadow: 10px 10px 10px -15px;
+  }
+  .ais-Autocomplete input {
+    display: none !important;
+  }
+  input.ais-SearchBox-input {
+    @media screen and (max-width: 768px) {
+      padding-left: 0;
+    }
+    width: 100%;
+    font-size: 3em;
+    padding-left: 18px;
+    font-weight: bold;
+  }
+  button.ais-SearchBox-reset {
+    display: none;
+  }
+  svg.ais-SearchBox-submitIcon path {
+    stroke: black;
+    stroke-width: 3.5px;
+    -webkit-text-stroke-width: 4px !important;
+    transform: scale(0.7);
+    transform: translate(7px, 7px) scale(0.7);
+  }
+  form.ais-SearchBox-form {
+    display: flex;
+  }
+  button.ais-SearchBox-submit {
+    /*background: black;*/
+    background: transparent;
+    border: none;
+    margin-left: -5em;
+    width: 5em;
+    height: 5em;
+    margin-top: auto;
+    margin-bottom: auto;
+    font-size: 3;
+  }
+  /* Highlighted mark*/
+  mark {
+    background: gray !important;
+    color: white !important;
+  }
+  .mobile-close-button {
+    @media screen and (min-width: 768px) {
+      display: none;
+    }
+  }
+  // end of namespacing
+}
+</style>

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="vue-site-wide-search-app" class="modal-app">
     <button
       class="btn btn-orange pull-right"
       type="submit"
@@ -11,6 +11,7 @@
     </button>
     <modal
       style="text-align:center;"
+      id="vue-site-wide-search-app-search-modal"
       v-model="open"
       :header="false"
       :footer="false"
@@ -21,6 +22,7 @@
         :primaryIndex="primaryIndex"
         :additionalIndices="additionalIndices"
         :refinement="null"
+        :indexes="indexes"
       ></search>
     </modal>
   </div>
@@ -36,6 +38,7 @@ export default {
   data() {
     return {
       open: false,
+      indexes: null,
       primaryIndex: null,
       additionalIndices: []
     };
@@ -45,6 +48,7 @@ export default {
       console.log("window.algolia_indices", window.algolia_indices);
       let indexJson = tryParseJSON(window.algolia_indices);
       console.log("indexJson", indexJson);
+      this.indexes = [...indexJson];
       if (indexJson) {
         if (!indexJson.length) {
           console.log("simple");
@@ -91,59 +95,3 @@ function tryParseJSON(possibleJSONString) {
   // label="Prime"
 }
 </script>
-
-<style lang="scss">
-body {
-  /*"Helvetica Neue", Helvetica, Arial, sans-serif*/
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-}
-
-@media screen and (min-width: 768px) {
-  .modal:before {
-    display: inline-block;
-    vertical-align: middle;
-    content: " ";
-    height: 100%;
-  }
-}
-.modal {
-  @media (max-width: 768px) {
-    left: 2.5vw;
-    right: auto;
-  }
-}
-.modal-dialog {
-  display: inline-block;
-  text-align: left;
-  vertical-align: middle;
-  width: 100% !important;
-  max-width: 100% !important;
-  margin: 0 !important;
-  @media screen and (min-width: 768px) {
-    width: 85% !important;
-    max-width: 1085px !important;
-    margin: 20px 0 !important;
-  }
-  @media (max-width: 768px) {
-    display: block;
-    width: 95vw !important;
-  }
-}
-.modal-content {
-  padding-bottom: 0;
-  border-radius: 0 !important;
-  @media screen and (min-width: 768px) {
-    border-radius: 6px !important;
-  }
-}
-
-.modal-content {
-  padding-bottom: 0 !important;
-}
-.modal-body {
-  padding: 0 25 10px !important;
-  @media screen and (min-width: 768px) {
-    padding: 10px 25px !important;
-  }
-}
-</style>

@@ -6,13 +6,13 @@
         :src="hit.images.thumbnail.url"
         alt
         class="profileImg"
-      >
+      />
       <img
         v-else
         src="https://cssh.northeastern.edu/wp-content/uploads/2019/05/logo-algolia.jpg"
         alt
         class="profileImg empty"
-      >
+      />
     </div>
     <!-- <div class="photo">
       <img
@@ -26,8 +26,8 @@
       <img src="Logo.png" alt class="profileImg empty">
     </div>-->
     <div class="content">
-      <h4 style="margin-bottom:0;">
-        <ais-highlight attribute="post_title" :hit="hit"/>
+      <h4 style="margin-top:0;margin-bottom:0;">
+        <ais-highlight attribute="post_title" :hit="hit" />
       </h4>
       <div class="text-capitalize">{{hit.post_type}} - {{hit.post_date_formatted}}</div>
       <p class="detail" v-trim v-text="hit.content"></p>

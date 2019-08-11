@@ -1,18 +1,18 @@
 <template>
   <div class="result-item row">
     <div v-if="hit.images.thumbnail && hit.images.thumbnail.url" class="photo">
-      <img :src="hit.images.thumbnail.url" alt class="profileImg">
+      <img :src="hit.images.thumbnail.url" alt class="profileImg" />
     </div>
     <div v-if="!hit.images.thumbnail || !hit.images.thumbnail.url" class="photo">
       <img
         src="https://cssh.northeastern.edu/wp-content/uploads/2019/05/logo-algolia.jpg"
         alt
         class="profileImg empty"
-      >
+      />
     </div>
     <div class="content">
-      <h4 style="margin-bottom:0;">
-        <ais-highlight attribute="post_title" :hit="hit"/>
+      <h4 style="margin-top:0;margin-bottom:0;">
+        <ais-highlight attribute="post_title" :hit="hit" />
       </h4>
       <div class="text-capitalize">{{hit.post_type}}</div>
 

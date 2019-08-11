@@ -1,113 +1,75 @@
 <template>
-  <div class="mini-search">
-    <ais-instant-search
-      :search-client="searchClient"
-      :index-name="primaryIndex.value"
-      :label="primaryIndex.label"
-    >
-      <ais-configure :hitsPerPage="3" :restrictSearchableAttributes="['post_title']"/>
-      <ais-search-box
-        v-if="urlRefinement"
-        :value="urlRefinement"
-        :class-names="{
+  <div>
+    <div v-for="(algoliaIndex, index) in indexes" :key="index">
+      <ais-instant-search
+        :search-client="searchClient"
+        :index-name="algoliaIndex.value"
+        :label="algoliaIndex.label"
+      >
+        <div v-if="index > 0">
+          <ais-configure :query="query" />
+        </div>
+        <div v-if="index === 0">
+          <ais-search-box
+            v-if="urlRefinement"
+            :value="urlRefinement"
+            :class-names="{
         'ais-SearchBox-input': 'search-page-vue-search-input'
       }"
-      />
-      <ais-search-box v-else autofocus placeholder="Search"/>
-
-      <ais-autocomplete :indices="additionalIndices">
-        <div slot-scope="{ currentRefinement, indices, refine }">
-          <input
-            class="form-control input-lg"
-            type="search"
-            :value="refinement || currentRefinement"
-            placeholder="Search..."
-            @input="refine($event.currentTarget.value)"
-            autofocus
-            show-loading-indicator
-          >
-          <div v-if="currentRefinement" class="result_hits">
-            <ul v-for="(index,x) in indices" :key="x" class="search-results">
-              <span v-if="index.hits.length">
-                <p v-if="index.label === 'primary'" class="result_title">Results from this site</p>
-                <p v-else class="result_title">{{index.label}}</p>
-
-                <hr class="result_title_hr">
-                <li class="result-items">
-                  <ul>
-                    <li
-                      v-for="(hit,i) in index.hits"
-                      :key="i"
-                      @click="hitRedirect(hit)"
-                      class="result-item row"
-                    >
-                      <Spotlights
-                        v-if="hit.post_type && hit.post_type_label==='Spotlights'"
-                        v-bind:hit="hit"
-                      ></Spotlights>
-                      <Faculty
-                        v-else-if="hit.post_type && hit.post_type_label==='Faculty'"
-                        v-bind:hit="hit"
-                      ></Faculty>
-                      <Events
-                        v-else-if="hit.post_type && hit.post_type_label==='Events'"
-                        v-bind:hit="hit"
-                      ></Events>
-                      <News
-                        v-else-if="hit.post_type && hit.post_type_label==='Newsletters'"
-                        v-bind:hit="hit"
-                      ></News>
-                      <Pathways
-                        v-else-if="hit.post_type && hit.post_type_label==='Publications'"
-                        v-bind:hit="hit"
-                      ></Pathways>
-                      <Posts
-                        v-else-if="hit.post_type && hit.post_type_label==='Posts'"
-                        v-bind:hit="hit"
-                      ></Posts>
-                      <Positions
-                        v-else-if="hit.post_type && hit.post_type_label==='Positions'"
-                        v-bind:hit="hit"
-                      ></Positions>
-                      <Publications
-                        v-else-if="hit.post_type && hit.post_type_label==='Posts'"
-                        v-bind:hit="hit"
-                      ></Publications>
-                      <Pages
-                        v-else-if="hit.post_type && hit.post_type_label==='pages'"
-                        v-bind:hit="hit"
-                      ></Pages>
-                      <Profiles v-else v-bind:hit="hit"></Profiles>
-                    </li>
-                    <hr class="item_hr">
-                  </ul>
-                </li>
-              </span>
-              <!-- Show NoResult Template for empty hits -->
-              <span
-                v-if="!index.hits.length && x === 0 && index.index !== 'wp_prime_searchable_posts'"
-              >
-                <Noresult v-bind:index="index" :searchTerm="currentRefinement"></Noresult>
-              </span>
-              <!-- <span
-                v-if="!index.hits.length && index.index === 'wp_prime_searchable_posts'"
-              >On Prime, no results</span>
-
-              <span v-if="!index.hits.length && index.index === 'wp_people_posts_faculty'">
-                <Noresult v-bind:index="index" :searchTerm="currentRefinement"></Noresult>
-              </span>
-              -->
-            </ul>
-          </div>
+          ></ais-search-box>
+          <ais-search-box v-else autofocus v-model="query" placeholder="Search">
+            <!-- <debounced-search-box :delay="200" /> -->
+          </ais-search-box>
         </div>
-      </ais-autocomplete>
-    </ais-instant-search>
+        <p v-if="algoliaIndex.label === 'primary'" class="result_title">Results from this site</p>
+        <p v-else class="result_title">{{algoliaIndex.label}}</p>
+        <ais-hits
+          :class-names="{
+        'ais-Hits': 'site-search-ais-Hits',
+        'ais-Hits-list': 'site-search-Hits-list',
+        'ais-Hits-item': 'site-search-Hits-item'
+      }"
+        >
+          <template slot="item" slot-scope="{ item }">
+            <Spotlights
+              v-if="item.post_type && item.post_type_label==='Spotlights'"
+              v-bind:hit="item"
+            ></Spotlights>
+            <Faculty
+              v-else-if="item.post_type && item.post_type_label==='Faculty'"
+              v-bind:hit="item"
+            ></Faculty>
+            <Events v-else-if="item.post_type && item.post_type_label==='Events'" v-bind:hit="item"></Events>
+            <News
+              v-else-if="item.post_type && item.post_type_label==='Newsletters'"
+              v-bind:hit="item"
+            ></News>
+            <Pathways
+              v-else-if="item.post_type && item.post_type_label==='Publications'"
+              v-bind:hit="item"
+            ></Pathways>
+            <Posts v-else-if="item.post_type && item.post_type_label==='Posts'" v-bind:hit="item"></Posts>
+            <Positions
+              v-else-if="item.post_type && item.post_type_label==='Positions'"
+              v-bind:hit="item"
+            ></Positions>
+            <Publications
+              v-else-if="item.post_type && item.post_type_label==='Posts'"
+              v-bind:hit="item"
+            ></Publications>
+            <Pages v-else-if="item.post_type && item.post_type_label==='pages'" v-bind:hit="item"></Pages>
+            <Profiles v-else v-bind:hit="item"></Profiles>
+          </template>
+        </ais-hits>
+      </ais-instant-search>
+    </div>
   </div>
 </template>
 
 <script>
 import algoliasearch from "algoliasearch/lite";
 
+import DebouncedSearchBox from "./SearchBox";
 import Spotlights from "./Spotlights";
 import Faculty from "./Faculty";
 import Events from "./Events";
@@ -121,8 +83,40 @@ import Profiles from "./Profiles";
 
 import Noresult from "./Noresult";
 import { config } from "@/algolia.config.js";
+
+const algoliaClient = algoliasearch(config.appId, config.key);
+
+const algoliaSearchClient = {
+  search(requests) {
+    if (requests.every(({ params }) => !params.query)) {
+      return Promise.resolve({
+        results: requests.map(() => ({
+          hits: [],
+          nbHits: 0,
+          processingTimeMS: 0
+        }))
+      });
+    }
+
+    return algoliaClient.search(requests);
+
+    // https://www.algolia.com/doc/guides/getting-insights-and-analytics/search-analytics/out-of-the-box-analytics/how-to/how-to-remove-empty-search-from-analytics/?language=vue#exclude-searches-from-your-analytics
+    // Why? We need to exclude empty searches from analytics
+
+    // const newRequests = requests.map(request => {
+    //   // test for empty string and change request parameter: analytics
+    //   if (!request.params.query || request.params.query.length === 0) {
+    //     request.params.analytics = false;
+    //   }
+    //   return request;
+    // });
+    // return algoliaClient.search(newRequests);
+  }
+};
+
 export default {
   components: {
+    DebouncedSearchBox,
     Spotlights,
     Faculty,
     Events,
@@ -136,10 +130,10 @@ export default {
     Noresult
   },
   name: "AlgoliaSearchUI",
-  props: ["primaryIndex", "additionalIndices", "refinement"],
+  props: ["primaryIndex", "additionalIndices", "refinement", "indexes"],
   data() {
     return {
-      searchClient: algoliasearch(config.appId, config.key),
+      searchClient: algoliaSearchClient,
       query: "",
       FoundResult: "0",
       sawFirstIndex: "false",
@@ -262,179 +256,174 @@ function KeyCheck(event) {
   // }
 }
 </script>
+<style lang="scss">
+.site-search-ais-Hits {
+  margin: 0 1.4em;
+}
+.site-search-Hits-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.site-search-Hits-item {
+  &:not(:last-of-type) {
+    border-bottom: 1px solid #404040;
+  }
+  .result-item {
+    display: flex;
+    margin: 0 0 0 0;
+    padding: 0.7em 0;
+    cursor: pointer;
+  }
+  .result-item .content {
+    padding-left: 1em;
+    padding-right: 1em;
+  }
+  .result-item img.profileImg {
+    width: 5em !important;
+  }
+  .result-item p {
+    font-size: 15px;
+  }
+}
+</style>
 
 <style lang="scss">
-.mobile-close-button {
-  @media screen and (min-width: 768px) {
+#vue-site-wide-search-app,
+#vue-site-wide-search-app-search-modal {
+  // modal specific stuff
+  &.modal {
+    @media (min-width: 768px) {
+      &:before {
+        display: inline-block;
+        vertical-align: middle;
+        content: " ";
+        height: 100%;
+      }
+    }
+    &.in .modal-dialog {
+      margin: auto !important;
+    }
+    .modal-dialog {
+      display: inline-block;
+      text-align: left;
+      vertical-align: middle;
+      width: 100% !important;
+      max-width: 100% !important;
+      margin: 0 !important;
+      @media screen and (min-width: 768px) {
+        width: 85% !important;
+        max-width: 1085px !important;
+        margin: 20px 0 !important;
+      }
+    }
+    .modal-content {
+      padding-bottom: 0 !important;
+      border-radius: 0 !important;
+      @media screen and (min-width: 768px) {
+        border-radius: 6px !important;
+      }
+    }
+    // .modal-body {
+    //   padding: 0 25 10px !important;
+    //   @media screen and (min-width: 768px) {
+    //     padding: 25px 25px 10px !important;
+    //   }
+    // }
+  }
+  // end modal specific stuff
+  .result_title {
+    @media screen and (max-width: 768px) {
+      padding: 0.5em 0;
+    }
+    font-weight: 700;
+    font-size: 1.5em !important;
+    font-weight: bold;
+    font-size: 1.5em !important;
+    margin: 0em 1em;
+    padding: 0.5em 0;
+    color: #404040;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+  }
+
+  .photo {
+    display: inline-block;
+    padding-right: 1em;
+    img {
+      max-width: 100px;
+    }
+  }
+  /* Padding between content title and detail*/
+  .content {
+    // display: inline-block;
+    .detail {
+      padding-top: 18px;
+    }
+  }
+  .ais-Highlight {
+    // font-weight: 700 !important;
+    // font-size: 15px !important;
+    margin-bottom: 20px;
+  }
+  svg.ais-SearchBox-submitIcon {
+    width: 3em !important;
+    height: 3em !important;
+    /* stroke-width: 16px !important; */
+  }
+  input.ais-SearchBox-input:focus {
+    outline-color: white;
+  }
+  input.ais-SearchBox-input {
+    border: none;
+    // box-shadow: 10px 10px 10px -15px;
+  }
+  .ais-Autocomplete input {
+    display: none !important;
+  }
+  input.ais-SearchBox-input {
+    @media screen and (max-width: 768px) {
+      padding-left: 0;
+    }
+    width: 100%;
+    font-size: 3em;
+    padding-left: 18px;
+    font-weight: bold;
+  }
+  button.ais-SearchBox-reset {
     display: none;
   }
-}
-.search-results {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.result-items {
-  ul {
-    @media screen and (max-width: 768px) {
-      padding-left: 0 !important;
+  svg.ais-SearchBox-submitIcon path {
+    stroke: black;
+    stroke-width: 3.5px;
+    -webkit-text-stroke-width: 4px !important;
+    transform: scale(0.7);
+    transform: translate(7px, 7px) scale(0.7);
+  }
+  form.ais-SearchBox-form {
+    display: flex;
+  }
+  button.ais-SearchBox-submit {
+    /*background: black;*/
+    background: transparent;
+    border: none;
+    margin-left: -5em;
+    width: 5em;
+    height: 5em;
+    margin-top: auto;
+    margin-bottom: auto;
+    font-size: 3;
+  }
+  /* Highlighted mark*/
+  mark {
+    background: gray !important;
+    color: white !important;
+  }
+  .mobile-close-button {
+    @media screen and (min-width: 768px) {
+      display: none;
     }
-    list-style: none;
   }
-}
-.result-item {
-  cursor: pointer;
-  margin-bottom: 1em;
-}
-$searchboxFontSize: 3em;
-$searchIconColor: black;
-$headerColor: #404040;
-$sub_titleColor: #505050;
-$textColor: #9e9e9e;
-$borderColor: black;
-$borderWidth: 3px;
-$titleLeftPadding: 18px;
-$sub_titleTopPadding: 5px;
-$sub_titleBottomPadding: 5px;
-$resultRightPadding: 20px;
-$highlightcolor: white;
-$highlightBackcolor: gray;
-$paddingfirstresult: 10px;
-$paddingcontent: $titleLeftPadding;
-
-input.ais-SearchBox-input:focus {
-  outline-color: white;
-}
-input.ais-SearchBox-input {
-  border: none;
-  box-shadow: 10px 10px 10px -15px;
-}
-.ais-Autocomplete input {
-  display: none !important;
-}
-input.ais-SearchBox-input {
-  @media screen and (max-width: 768px) {
-    padding-left: 0;
-  }
-  width: 100%;
-  font-size: $searchboxFontSize;
-  padding-left: $titleLeftPadding;
-  font-weight: bold;
-}
-svg.ais-SearchBox-submitIcon {
-  width: 3em !important;
-  height: 3em !important;
-  /* stroke-width: 16px !important; */
-}
-button.ais-SearchBox-reset {
-  display: none;
-}
-svg.ais-SearchBox-submitIcon path {
-  stroke: $searchIconColor;
-  stroke-width: 3.5px;
-  -webkit-text-stroke-width: 4px !important;
-  transform: scale(0.7);
-  transform: translate(7px, 7px) scale(0.7);
-}
-form.ais-SearchBox-form {
-  display: flex;
-}
-button.ais-SearchBox-submit {
-  /*background: $searchIconColor;*/
-  background: transparent;
-  border: none;
-  margin-left: -5em;
-  width: 5em;
-  height: 5em;
-  margin-top: auto;
-  margin-bottom: auto;
-  font-size: 3;
-}
-/* Styling for Result*/
-.result_hits {
-  // border: $borderWidth solid $borderColor;
-  margin-top: 1.5em;
-  min-height: 50vh !important;
-}
-.result_title {
-  @media screen and (max-width: 768px) {
-    padding: 0.5em 0;
-  }
-  font-weight: 700;
-  font-size: 1.5em !important;
-  font-weight: bold;
-  font-size: 1.5em !important;
-  margin: 0em;
-  padding: 0.5em 0.5em 0.7em $titleLeftPadding;
-  color: $headerColor;
-}
-hr.result_title_hr {
-  @media screen and (max-width: 768px) {
-    margin: 0.3em 0 0;
-  }
-  margin: 0.3em 1.4em 0;
-  border: 1px solid $borderColor;
-}
-hr.item_hr {
-  margin: $titleLeftPadding 0 !important;
-  margin-right: $resultRightPadding !important;
-  border: 1px solid $borderColor;
-}
-.sub_title {
-  padding-left: $titleLeftPadding !important;
-  padding-top: $sub_titleTopPadding !important;
-  padding-bottom: $sub_titleBottomPadding !important;
-  margin: 0px !important;
-  text-transform: capitalize;
-  font-size: 1.2em !important;
-  font-weight: 600;
-  color: $sub_titleColor;
-}
-.category {
-  text-transform: capitalize;
-}
-.result-items ul {
-  padding-left: $titleLeftPadding;
-  padding-top: $paddingfirstresult;
-}
-
-.result-item.row {
-  display: flex;
-  margin: 0 0 0.5em 0;
-}
-.result-item .content {
-  padding-left: 1em;
-  padding-right: 1em;
-}
-.result-item img.profileImg {
-  width: 5em !important;
-  // margin-top: 10px;
-}
-.result-item p {
-  font-size: 15px;
-}
-.ais-Highlight {
-  // font-weight: 700 !important;
-  // font-size: 15px !important;
-  margin-bottom: 20px;
-}
-
-.content.noresult {
-  padding-top: $paddingfirstresult;
-  padding-left: $titleLeftPadding;
-}
-
-/* Padding between content title and detail*/
-.content .detail {
-  padding-top: $paddingcontent;
-}
-/* Highlighted mark*/
-mark {
-  background: $highlightBackcolor !important;
-  color: $highlightcolor !important;
-}
-
-.modal.in .modal-dialog {
-  margin: auto !important;
+  // end of namespacing
 }
 </style>

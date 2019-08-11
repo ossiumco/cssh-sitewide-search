@@ -1,12 +1,9 @@
 <template>
   <div>
-    <p v-if="index.label !== 'primary'" class="result_title">No results found from {{index.label}}</p>
+    <p v-if="index.label !== 'primary'" class="result_title">No results found on {{index.label}}</p>
     <p v-else class="result_title">No results found on this site</p>
-    <!-- <hr class="result_title_hr"> -->
     <div class="content noresult">
-      <span
-        style="font-size: 1.5em;"
-      >No results were found for your search. Would you like to retry your search across all of CSSH?</span>
+      <span style="font-size: 1.5em;">Would you like to retry your search across all of CSSH?</span>
       <button @click="goToSiteWideSearch" class="btn btn-danger btn-lg btn-block">Search All of CSSH</button>
     </div>
   </div>
@@ -22,13 +19,19 @@ export default {
     goToSiteWideSearch() {
       let searchTerm = encodeURI(this.searchTerm);
       window.location.assign(
-        `https://cssh.northeastern.edu/people/sitewide-search?searchFor=${searchTerm}`
+        `https://cssh.northeastern.edu/sitewide-search?searchFor=${searchTerm}`
       );
     }
   }
 };
 </script>
 <style lang="scss" scoped>
+.content.noresult {
+  @media (min-width: 768px) {
+    padding-top: 10px;
+    padding-left: 18px;
+  }
+}
 .btn {
   margin-top: 2em;
 }
