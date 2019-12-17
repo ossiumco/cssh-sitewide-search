@@ -18,11 +18,17 @@
       }"
           ></ais-search-box>
           <ais-search-box v-else autofocus v-model="query" placeholder="Search">
-            <!-- <debounced-search-box :delay="200" /> -->
+            <!-- <debounced-search-box :delay="400" /> -->
           </ais-search-box>
         </div>
-        <p v-if="algoliaIndex.label === 'primary'" class="result_title">Results from this site</p>
-        <p v-else class="result_title">{{algoliaIndex.label}}</p>
+        <p
+          v-if="algoliaIndex.label === 'primary' && query"
+          class="result_title"
+        >Results from this site</p>
+        <p
+          v-if="algoliaIndex.label !== 'primary' && query"
+          class="result_title"
+        >{{algoliaIndex.label}}</p>
         <ais-hits
           :class-names="{
         'ais-Hits': 'site-search-ais-Hits',
@@ -31,34 +37,39 @@
       }"
         >
           <template slot="item" slot-scope="{ item }">
-            <Spotlights
-              v-if="item.post_type && item.post_type_label==='Spotlights'"
-              v-bind:hit="item"
-            ></Spotlights>
-            <Faculty
-              v-else-if="item.post_type && item.post_type_label==='Faculty'"
-              v-bind:hit="item"
-            ></Faculty>
-            <Events v-else-if="item.post_type && item.post_type_label==='Events'" v-bind:hit="item"></Events>
-            <News
-              v-else-if="item.post_type && item.post_type_label==='Newsletters'"
-              v-bind:hit="item"
-            ></News>
-            <Pathways
-              v-else-if="item.post_type && item.post_type_label==='Publications'"
-              v-bind:hit="item"
-            ></Pathways>
-            <Posts v-else-if="item.post_type && item.post_type_label==='Posts'" v-bind:hit="item"></Posts>
-            <Positions
-              v-else-if="item.post_type && item.post_type_label==='Positions'"
-              v-bind:hit="item"
-            ></Positions>
-            <Publications
-              v-else-if="item.post_type && item.post_type_label==='Posts'"
-              v-bind:hit="item"
-            ></Publications>
-            <Pages v-else-if="item.post_type && item.post_type_label==='pages'" v-bind:hit="item"></Pages>
-            <Profiles v-else v-bind:hit="item"></Profiles>
+            <div @click="hitRedirect(item)">
+              <Spotlights
+                v-if="item.post_type && item.post_type_label==='Spotlights'"
+                v-bind:hit="item"
+              ></Spotlights>
+              <Faculty
+                v-else-if="item.post_type && item.post_type_label==='Faculty'"
+                v-bind:hit="item"
+              ></Faculty>
+              <Events
+                v-else-if="item.post_type && item.post_type_label==='Events'"
+                v-bind:hit="item"
+              ></Events>
+              <News
+                v-else-if="item.post_type && item.post_type_label==='Newsletters'"
+                v-bind:hit="item"
+              ></News>
+              <Pathways
+                v-else-if="item.post_type && item.post_type_label==='Publications'"
+                v-bind:hit="item"
+              ></Pathways>
+              <Posts v-else-if="item.post_type && item.post_type_label==='Posts'" v-bind:hit="item"></Posts>
+              <Positions
+                v-else-if="item.post_type && item.post_type_label==='Positions'"
+                v-bind:hit="item"
+              ></Positions>
+              <Publications
+                v-else-if="item.post_type && item.post_type_label==='Posts'"
+                v-bind:hit="item"
+              ></Publications>
+              <Pages v-else-if="item.post_type && item.post_type_label==='pages'" v-bind:hit="item"></Pages>
+              <Profiles v-else v-bind:hit="item"></Profiles>
+            </div>
           </template>
         </ais-hits>
       </ais-instant-search>
@@ -69,7 +80,7 @@
 <script>
 import algoliasearch from "algoliasearch/lite";
 
-import DebouncedSearchBox from "./SearchBox";
+// import DebouncedSearchBox from "./SearchBox";
 import Spotlights from "./Spotlights";
 import Faculty from "./Faculty";
 import Events from "./Events";
@@ -88,7 +99,9 @@ const algoliaClient = algoliasearch(config.appId, config.key);
 
 const algoliaSearchClient = {
   search(requests) {
-    if (requests.every(({ params }) => !params.query)) {
+    if (
+      requests.every(({ params }) => !params.query || params.query.length < 3)
+    ) {
       return Promise.resolve({
         results: requests.map(() => ({
           hits: [],
@@ -116,7 +129,7 @@ const algoliaSearchClient = {
 
 export default {
   components: {
-    DebouncedSearchBox,
+    // DebouncedSearchBox,
     Spotlights,
     Faculty,
     Events,
